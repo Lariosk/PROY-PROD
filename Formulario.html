@@ -1,0 +1,47 @@
+<?php
+
+require 'database.php';
+
+if ( !empty($_POST)) {
+// Detectar errores de validación
+$nameError = null;
+$emailError = null;
+$mobileError = null;
+
+// Capturar valores de entrada
+$name = $_POST['name'];
+$email = $_POST['email'];
+$mobile = $_POST['mobile'];
+
+// Validar entrada
+$valid = true;
+if (empty($name)) {
+$nameError = Por favor, introduce tu nombre';
+$valid = false;
+}
+
+if (empty($email)) {
+$emailError = 'Por favor, introduce una dirección de correo electrónico';
+$valid = false;
+} else if ( !filter_var($email,FILTER_VALIDATE_EMAIL) ) {
+$emailError = 'Por favor, introduce una dirección de correo electrónico';
+$valid = false;
+}
+
+if (empty($mobile)) {
+$mobileError = 'Por favor, introduce tu número de móvil';
+$valid = false;
+}
+
+// Daten eingeben
+if ($valid) {
+     $pdo = Database::connect();
+     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+     $sql = "INSERT INTO customers (name,email,mobile) values(?, ?, ?)";
+     $q = $pdo->prepare($sql);
+     $q->execute(array($name,$email,$mobile));
+     Database::disconnect();
+     header("Location: index.php");
+}
+      }
+?>
